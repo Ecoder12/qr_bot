@@ -104,6 +104,14 @@
                 <th>Payment Method</th>
                 <td><%= ticketData.paymentMethod %></td>
             </tr>
+            
+            <!-- Show Transaction ID only if payment method is UPI -->
+            <% if (ticketData.paymentMethod === "UPI") { %>
+            <tr>
+                <th>Transaction ID</th>
+                <td><%= ticketData.transaction_id %></td>
+            </tr>
+            <% } %>
         </table>
         
         <div class="qr-section">
@@ -113,6 +121,13 @@
             
             <a href="<%= ticketData.qrCode %>" class="download-btn" download="ticket_qr.png">
                 Download QR Code
+            </a>
+        </div>
+
+        <!-- Download ticket details as a .txt file -->
+        <div class="qr-section">
+            <a href="data:text/plain;charset=utf-8,<%= encodeURIComponent(ticketData.campusAmbassadorID + '\n' + ticketData.fullName + '\n' + ticketData.phoneNumber + '\n' + ticketData.emailAddress + '\n' + ticketData.ticketType + '\n' + ticketData.category + '\n' + ticketData.paymentMethod + (ticketData.paymentMethod === 'UPI' ? '\nTransaction ID: ' + ticketData.transaction_id : '') + '\nQR Code: ' + ticketData.qrCode) %>" download="ticket_details.txt" class="download-btn">
+                Download Ticket Details
             </a>
         </div>
     </div>

@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Registration</title>
+    <title>Ticket Form</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: white;
-            color: #333;
+            background-color: #FF6F00;
+            color: #175c43;
         }
 
         .container {
             width: 80%;
             margin: auto;
             padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
@@ -25,89 +28,123 @@
         }
 
         form {
-            background-color: #f9f9f9;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
         }
 
         label {
-            font-size: 16px;
-            margin-bottom: 10px;
             display: block;
-            color: #FF6F00;
+            font-weight: 500;
+            margin-bottom: 10px;
         }
 
-        input, select, button {
+        input, select {
             width: 100%;
             padding: 10px;
-            margin: 10px 0;
-            font-size: 14px;
-            border: 1px solid #ccc;
+            margin-bottom: 20px;
             border-radius: 5px;
+            border: 1px solid #ddd;
         }
 
-        button {
+        .payment-method-select {
+            margin-bottom: 20px;
+        }
+
+        .submit-btn {
             background-color: #FF6F00;
             color: white;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 5px;
             cursor: pointer;
-            border: none;
-            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            width: 100%;
         }
 
-        button:hover {
+        .submit-btn:hover {
             background-color: #FF8C1A;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Loca Luz Carnival Ticket Registration</h2>
+        <h2>Enter Your Ticket Information</h2>
+
         <form action="/generate-qr" method="POST">
-            <div>
-                <label for="campusAmbassadorID">Campus Ambassador ID</label>
-                <input type="text" id="campusAmbassadorID" name="campusAmbassadorID" required>
+            <label for="promoterID">Promoter ID</label>
+            <input type="text" id="promoterID" name="campusAmbassadorID" value="" required>
+
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" required>
+
+            <label for="phoneNumber">Phone Number</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" required>
+
+            <label for="emailAddress">Email Address</label>
+            <input type="email" id="emailAddress" name="emailAddress" required>
+
+            <label for="ticketType">Ticket Type</label>
+            <select id="ticketType" name="ticketType" required>
+                <option value="VIP">VIP</option>
+                <option value="General">General</option>
+            </select>
+
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+                <option value="Student">Student</option>
+                <option value="Professional">Professional</option>
+            </select>
+
+            <label for="paymentMethod">Payment Method</label>
+            <select id="paymentMethod" name="paymentMethod" class="payment-method-select" required>
+                <option value="CASH">CASH</option>
+                <option value="UPI">UPI</option>
+            </select>
+
+            <!-- Input field for transaction_id, which is shown only if UPI is selected -->
+            <div id="upiTransactionIdField" style="display: none;">
+                <label for="transaction_id">Transaction ID (UPI)</label>
+                <input type="text" id="transaction_id" name="transaction_id">
             </div>
-            <div>
-                <label for="fullName">Full Name</label>
-                <input type="text" id="fullName" name="fullName" required>
-            </div>
-            <div>
-                <label for="phoneNumber">Phone Number</label>
-                <input type="text" id="phoneNumber" name="phoneNumber" required>
-            </div>
-            <div>
-                <label for="emailAddress">Email Address</label>
-                <input type="email" id="emailAddress" name="emailAddress" required>
-            </div>
-            <div>
-                <label for="ticketType">Ticket Type</label>
-                <select id="ticketType" name="ticketType" required>
-                    <option value="Fanpit">Fanpit</option>
-                    <option value="VIP">VIP</option>
-                    <option value="Premium">Premium</option>
-                </select>
-            </div>
-            <div>
-                <label for="category">Category</label>
-                <select id="category" name="category" required>
-                    <option value="1-Day Pass">1-Day Pass</option>
-                    <option value="2-Day Pass">2-Day Pass</option>
-                </select>
-            </div>
-            <div>
-                <label for="paymentMethod">Payment Method</label>
-                <select id="paymentMethod" name="paymentMethod" required>
-                    <option value="UPI">UPI</option>
-                    <option value="Cash">Cash</option>
-                </select>
-            </div>
-            <!-- <div>
-                <label for="emailAddress">Email Address</label>
-                <input type="email" id="emailAddress" name="emailAddress" required>
-            </div> -->
-            <button type="submit">Submit</button>
+
+            <button type="submit" class="submit-btn">Generate QR Code</button>
         </form>
     </div>
+
+    <script>
+        // Generate the Promoter ID in the format LOCAGV1 + 4-digit number + current date/time (IST) with separator
+        const generatePromoterID = () => {
+            const uniqueNumber = Math.floor(1000 + Math.random() * 9000); // Generates a 4-digit number
+            const now = new Date();
+
+            // Convert current time to IST (GMT+5:30)
+            const options = {
+                timeZone: 'Asia/Kolkata',
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            };
+
+            const dateInIST = now.toLocaleString('en-IN', options).replace(/[/, ]/g, '').replace(/:/g, '');
+            return `LOCAGV1-${uniqueNumber}-${dateInIST}`;
+        };
+
+        // Set the generated Promoter ID to the input field
+        document.getElementById("promoterID").value = generatePromoterID();
+
+        // Show/Hide the Transaction ID field based on selected Payment Method
+        document.getElementById("paymentMethod").addEventListener("change", function() {
+            const transactionIdField = document.getElementById("upiTransactionIdField");
+            if (this.value === "UPI") {
+                transactionIdField.style.display = "block";
+            } else {
+                transactionIdField.style.display = "none";
+            }
+        });
+    </script>
 </body>
 </html>
