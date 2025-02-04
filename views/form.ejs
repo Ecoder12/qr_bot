@@ -70,9 +70,9 @@
     <div class="container">
         <h2>Enter Your Ticket Information</h2>
 
-        <form action="/generate-qr" method="POST">
+        <form action="/generate-ticket" method="POST">
             <label for="promoterID">Promoter ID</label>
-            <input type="text" id="promoterID" name="campusAmbassadorID" value="" required>
+            <input type="text" id="promoterID" name="campusAmbassadorID" value="" required readonly>
 
             <label for="fullName">Full Name</label>
             <input type="text" id="fullName" name="fullName" required>
@@ -85,14 +85,16 @@
 
             <label for="ticketType">Ticket Type</label>
             <select id="ticketType" name="ticketType" required>
+                <option value="FANPIT">FANPIT</option>
                 <option value="VIP">VIP</option>
-                <option value="General">General</option>
+                <option value="PREMIUM">PREMIUM</option>
             </select>
 
-            <label for="category">Category</label>
+            <label for="category">TICKET Category</label>
             <select id="category" name="category" required>
-                <option value="Student">Student</option>
-                <option value="Professional">Professional</option>
+                <option value="WEEKEND">WEEKEND</option>
+                <option value="DAY1">DAY 1</option>
+                <option value="DAY2">DAY 2</option>
             </select>
 
             <label for="paymentMethod">Payment Method</label>
@@ -106,8 +108,9 @@
                 <label for="transaction_id">Transaction ID (UPI)</label>
                 <input type="text" id="transaction_id" name="transaction_id">
             </div>
-
-            <button type="submit" class="submit-btn">Generate QR Code</button>
+            <label for="price">Price</label>
+            <input type="text" id="price" name="price" value= '₹1200' readonly>
+            <button type="submit" class="submit-btn">Generate Ticket</button>
         </form>
     </div>
 

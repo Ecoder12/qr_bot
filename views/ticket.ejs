@@ -8,128 +8,134 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            background-color: #FF6F00;
-            color: #175c43;
+            background-color: #FF8C1A;
+            color: #333;
+            text-align: center;
+            padding: 20px;
         }
 
-        .container {
-            width: 80%;
+        .ticket-container {
+            max-width: 600px;
             margin: auto;
-            padding: 20px;
             background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-align: left;
         }
 
         h2 {
+            color: #FF8C1A;
+            font-size: 26px;
+            font-weight: 700;
             text-align: center;
-            color: #FF6F00;
-            font-size: 28px;
+            margin-bottom: 15px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        table th {
+            background-color: #FF8C1A;
+            color: white;
+            font-weight: 500;
+        }
+
+        table td {
+            background-color: #fff;
+            font-weight: 400;
+        }
+
+        .qr-download-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-top: 20px;
         }
 
-        th, td {
-            padding: 10px;
-            text-align: left;
-            border: 1px solid #ddd;
-        }
-
-        th {
-            background-color: #FF6F00;
-            color: white;
-        }
-
-        .qr-section {
-            text-align: center;
-            margin-top: 30px;
-        }
-
-        .qr-section img {
-            margin: 20px 0;
-            width: 200px;
-            height: 200px;
+        .qr-code {
+            width: 160px;
+            height: 160px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
 
         .download-btn {
-            background-color: #FF6F00;
+            background-color: #FF8C1A;
             color: white;
-            padding: 12px 20px;
+            padding: 14px 22px;
             font-size: 18px;
-            border-radius: 5px;
+            font-weight: 500;
+            border-radius: 8px;
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
+            transition: background 0.3s;
         }
 
         .download-btn:hover {
-            background-color: #FF8C1A;
+            background-color: #e67e00;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Your Ticket Details</h2>
-        
+
+    <div class="ticket-container">
+        <h2>LOCALUZ EVENT TICKET</h2>
+
         <table>
             <tr>
-                <th>Campus Ambassador ID</th>
-                <td><%= ticketData.campusAmbassadorID %></td>
+                <th>Promoter ID</th>
+                <td><%= ticket.promoterID %></td>
             </tr>
             <tr>
-                <th>Full Name</th>
-                <td><%= ticketData.fullName %></td>
+                <th>Name</th>
+                <td><%= ticket.fullName %></td>
             </tr>
             <tr>
-                <th>Phone Number</th>
-                <td><%= ticketData.phoneNumber %></td>
+                <th>Phone</th>
+                <td><%= ticket.phoneNumber %></td>
             </tr>
             <tr>
-                <th>Email Address</th>
-                <td><%= ticketData.emailAddress %></td>
+                <th>Email</th>
+                <td><%= ticket.emailAddress %></td>
             </tr>
             <tr>
                 <th>Ticket Type</th>
-                <td><%= ticketData.ticketType %></td>
+                <td><%= ticket.ticketType %></td>
             </tr>
             <tr>
                 <th>Category</th>
-                <td><%= ticketData.category %></td>
+                <td><%= ticket.category %></td>
             </tr>
             <tr>
                 <th>Payment Method</th>
-                <td><%= ticketData.paymentMethod %></td>
+                <td><%= ticket.paymentMethod %></td>
             </tr>
-            
-            <!-- Show Transaction ID only if payment method is UPI -->
-            <% if (ticketData.paymentMethod === "UPI") { %>
+            <% if (ticket.paymentMethod === "UPI") { %>
             <tr>
                 <th>Transaction ID</th>
-                <td><%= ticketData.transaction_id %></td>
+                <td><%= ticket.transaction_id %></td>
             </tr>
             <% } %>
         </table>
-        
-        <div class="qr-section">
-            <h3>QR Code</h3>
-            <img src="<%= ticketData.qrCode %>" alt="QR Code">
-            <p>Scan this QR code to verify your ticket!</p>
-            
-            <a href="<%= ticketData.qrCode %>" class="download-btn" download="ticket_qr.png">
-                Download QR Code
-            </a>
+
+        <div class="qr-download-container">
+            <img src="<%= ticket.qrCodeURL %>" alt="QR Code" class="qr-code">
+            <a href="/download-ticket?<%= new URLSearchParams(ticket).toString() %>" class="download-btn">Download Ticket</a>
         </div>
 
-        <!-- Download ticket details as a .txt file -->
-        <div class="qr-section">
-            <a href="data:text/plain;charset=utf-8,<%= encodeURIComponent(ticketData.campusAmbassadorID + '\n' + ticketData.fullName + '\n' + ticketData.phoneNumber + '\n' + ticketData.emailAddress + '\n' + ticketData.ticketType + '\n' + ticketData.category + '\n' + ticketData.paymentMethod + (ticketData.paymentMethod === 'UPI' ? '\nTransaction ID: ' + ticketData.transaction_id : '') + '\nQR Code: ' + ticketData.qrCode) %>" download="ticket_details.txt" class="download-btn">
-                Download Ticket Details
-            </a>
-        </div>
     </div>
+
 </body>
 </html>
