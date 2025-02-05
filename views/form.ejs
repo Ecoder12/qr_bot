@@ -45,10 +45,6 @@
             border: 1px solid #ddd;
         }
 
-        .payment-method-select {
-            margin-bottom: 20px;
-        }
-
         .submit-btn {
             background-color: #FF6F00;
             color: white;
@@ -72,7 +68,9 @@
 
         <form action="/generate-ticket" method="POST">
             <label for="promoterID">Promoter ID</label>
-            <input type="text" id="promoterID" name="campusAmbassadorID" value="" required readonly>
+            <!-- <input type="text" id="promoterID" name="campusAmbassadorID" required readonly> -->
+            <input type="text" id="promoterID" name="campusAmbassadorID" required>
+
 
             <label for="fullName">Full Name</label>
             <input type="text" id="fullName" name="fullName" required>
@@ -85,7 +83,7 @@
 
             <label for="ticketType">Ticket Type</label>
             <select id="ticketType" name="ticketType" required>
-                <option value="FANPIT">FANPIT</option>
+                <option value="FANPIT">FAN PIT</option>
                 <option value="VIP">VIP</option>
                 <option value="PREMIUM">PREMIUM</option>
             </select>
@@ -98,56 +96,92 @@
             </select>
 
             <label for="paymentMethod">Payment Method</label>
-            <select id="paymentMethod" name="paymentMethod" class="payment-method-select" required>
+            <select id="paymentMethod" name="paymentMethod" required>
                 <option value="CASH">CASH</option>
                 <option value="UPI">UPI</option>
             </select>
 
-            <!-- Input field for transaction_id, which is shown only if UPI is selected -->
             <div id="upiTransactionIdField" style="display: none;">
                 <label for="transaction_id">Transaction ID (UPI)</label>
                 <input type="text" id="transaction_id" name="transaction_id">
             </div>
+
             <label for="price">Price</label>
-            <input type="text" id="price" name="price" value= '₹1200' readonly>
+            <input type="text" id="price" name="price" readonly>
+
             <button type="submit" class="submit-btn">Generate Ticket</button>
         </form>
     </div>
 
     <script>
-        // Generate the Promoter ID in the format LOCAGV1 + 4-digit number + current date/time (IST) with separator
-        const generatePromoterID = () => {
-            const uniqueNumber = Math.floor(1000 + Math.random() * 9000); // Generates a 4-digit number
-            const now = new Date();
-
-            // Convert current time to IST (GMT+5:30)
-            const options = {
-                timeZone: 'Asia/Kolkata',
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            };
-
-            const dateInIST = now.toLocaleString('en-IN', options).replace(/[/, ]/g, '').replace(/:/g, '');
-            return `LOCAGV1-${uniqueNumber}-${dateInIST}`;
+        // Pricing details based on dates
+        const pricing = {
+            "FANPIT": { pre: 1950, mid: 2150, final: 2450 },
+            "VIP": { pre: 1150, mid: 1250, final: 1450 },
+            "PREMIUM": { pre: 3100, mid: 3400, final: 3900 }
         };
 
-        // Set the generated Promoter ID to the input field
-        document.getElementById("promoterID").value = generatePromoterID();
+        function getCurrentSalePhase() {
+            const today = new Date();
+            const preStart = new Date("2025-01-29");
+            const preEnd = new Date("2025-02-05");
+            const midStart = new Date("2025-02-05");
+            const midEnd = new Date("2025-02-15");
+            const finalStart = new Date("2025-02-15");
+            const finalEnd = new Date("2025-02-23");
 
-        // Show/Hide the Transaction ID field based on selected Payment Method
+            if (today >= preStart && today < preEnd) return "pre";
+            if (today >= midStart && today < midEnd) return "mid";
+            if (today >= finalStart && today <= finalEnd) return "final";
+
+            return "final"; // Default to final sale if outside range
+        }
+
+        function updatePrice() {
+            const ticketType = document.getElementById("ticketType").value;
+            const salePhase = getCurrentSalePhase();
+            document.getElementById("price").value = `₹${pricing[ticketType][salePhase]}`;
+        }
+
+        // function generatePromoterID() {
+        //     const uniqueNumber = Math.floor(1000 + Math.random() * 9000);
+        //     const now = new Date();
+        //     const options = {
+        //         timeZone: 'Asia/Kolkata',
+        //         year: 'numeric',
+        //         month: '2-digit',
+        //         day: '2-digit',
+        //         hour: '2-digit',
+        //         minute: '2-digit',
+        //         second: '2-digit',
+        //         hour12: false
+        //     };
+        //     const dateInIST = now.toLocaleString('en-IN', options).replace(/[/, ]/g, '').replace(/:/g, '');
+        //     return `LOCAGV1-${uniqueNumber}-${dateInIST}`;
+        // }
+
+        // document.getElementById("promoterID").value = generatePromoterID();
+
+        document.getElementById("ticketType").addEventListener("change", updatePrice);
+        document.getElementById("category").addEventListener("change", updatePrice);
+
         document.getElementById("paymentMethod").addEventListener("change", function() {
-            const transactionIdField = document.getElementById("upiTransactionIdField");
-            if (this.value === "UPI") {
-                transactionIdField.style.display = "block";
-            } else {
-                transactionIdField.style.display = "none";
+            document.getElementById("upiTransactionIdField").style.display = this.value === "UPI" ? "block" : "none";
+        });
+
+        updatePrice();
+    </script>
+    <script>
+        const validPromoterIDs = ["LOCALUZPSP29", "LOCALUZPPK28"];
+    
+        document.querySelector("form").addEventListener("submit", function(event) {
+            const promoterID = document.getElementById("promoterID").value;
+            if (!validPromoterIDs.includes(promoterID)) {
+                alert("Invalid Promoter ID. Please enter a valid ID.");
+                event.preventDefault();
             }
         });
     </script>
+    
 </body>
 </html>
