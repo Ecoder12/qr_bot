@@ -24,7 +24,7 @@ const db = mysql.createConnection({
 
 // Generate Ticket with QR Code & PDF
 router.post("/generate-ticket", async (req, res) => {
-    const { campusAmbassadorID, fullName, phoneNumber, emailAddress, ticketType, category, paymentMethod, transaction_id } = req.body;
+    const { campusAmbassadorID, fullName, phoneNumber, emailAddress, ticketType, category, paymentMethod, quantity, transaction_id } = req.body;
 
     // Generate QR Code
     const qrData = `${fullName} | ${ticketType} | ${category} | ${paymentMethod}`;
@@ -41,6 +41,7 @@ router.post("/generate-ticket", async (req, res) => {
         ticketType,
         category,
         paymentMethod,
+        quantity,
         transaction_id: paymentMethod === "UPI" ? transaction_id : null,
         qrCodeURL: "/qrcode.png", // QR Code accessible via public folder
     };
@@ -51,7 +52,7 @@ router.post("/generate-ticket", async (req, res) => {
 
 // Route to generate and download PDF ticket
 router.get("/download-ticket", async (req, res) => {
-    const { fullName, phoneNumber, emailAddress, ticketType, category, paymentMethod, transaction_id } = req.query;
+    const { fullName, phoneNumber, emailAddress, ticketType, category, paymentMethod,quantity, transaction_id } = req.query;
 
     // Generate Unique Code (Always 6 Characters)
     const uniqueCode = "LOCALUZ-" + Math.random().toString(36).substring(2, 8).toUpperCase(); // e.g. "TVERYCX9A2P"
@@ -94,6 +95,8 @@ router.get("/download-ticket", async (req, res) => {
     doc.text(`Category: ${category}`);
     doc.moveDown(1);
     doc.text(`Payment Method: ${paymentMethod}`);
+    doc.moveDown(1);
+    doc.text(`Quantity: ${quantity}`);
     if (paymentMethod === "UPI") doc.text(`Transaction ID: ${transaction_id}`);
 
     doc.moveDown(1.5);

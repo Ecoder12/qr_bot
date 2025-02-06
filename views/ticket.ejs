@@ -122,6 +122,12 @@
                 <th>Payment Method</th>
                 <td><%= ticket.paymentMethod %></td>
             </tr>
+
+            <tr>
+                <th>Quantity</th>
+                <td><%= ticket.quantity %></td>
+            </tr>
+
             <% if (ticket.paymentMethod === "UPI") { %>
             <tr>
                 <th>Transaction ID</th>
