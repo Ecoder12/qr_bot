@@ -108,10 +108,10 @@ router.get("/download-ticket", async (req, res) => {
     doc.text(`QUANTITY: ${quantity}`);
     if (paymentMethod === "UPI") doc.text(`TRANSACTION ID: ${transaction_id}`);
 
-    doc.moveDown(0.5);
+    doc.moveDown(0.1);
 
     // QR Code Section
-    doc.image(qrPath, { fit: [140, 140], align: "center" });
+    doc.image(qrPath, { fit: [120, 120], align: "center" });
 
     // Unique Code Below QR
     doc.moveDown(4);
