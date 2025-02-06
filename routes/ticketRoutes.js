@@ -68,49 +68,58 @@ router.get("/download-ticket", async (req, res) => {
     // Generate QR Code
     const qrData = `${fullName} | ${ticketType} | ${category} | ${paymentMethod}`;
     const qrPath = path.join(__dirname, "../public/qrcode.png");
+    const headerBanner = path.join(__dirname, "../public/2.png");
     await QRCode.toFile(qrPath, qrData);
 
     // Generate PDF Ticket
+
+
     const doc = new PDFDocument({ size: "A4", margins: { top: 30, left: 50, right: 50, bottom: 30 } });
     const stream = fs.createWriteStream(pdfPath);
     doc.pipe(stream);
+    // doc.image(headerBanner, { width: 500, height: 100, align: "center" });
+    const pageWidth = doc.page.width;
+    const pageHeight = doc.page.height;
+    
+    doc.image(headerBanner, 0, 0, { width: pageWidth, height: pageHeight, opacity: 0.3 });
+    
 
     // HEADER
-    doc.font("Helvetica-Bold").fontSize(28).fillColor("#FF6F00").text("LOCALUZ EVENT TICKET", { align: "center" });
+    // doc.font("Helvetica-Bold").fontSize(28).fillColor("#FF6F00").text("LOCALUZ EVENT TICKET", { align: "center" });
 
-    doc.moveDown(1.5);
+    doc.moveDown(8);
 
     // Ticket Details Section
-    doc.font("Helvetica").fontSize(16).fillColor("#333");
+    doc.font("Helvetica").fontSize(16).fillColor("#FFFFFF");
 
-    doc.text(`Name: ${fullName}`);
+    doc.text(`NAME: ${fullName}`);
     doc.moveDown(1);
 
-    doc.text(`Phone: ${phoneNumber}`);
+    doc.text(`PHONE: ${phoneNumber}`);
     doc.moveDown(1);
-    doc.text(`Email: ${emailAddress}`);
+    doc.text(`EMAIL: ${emailAddress}`);
     doc.moveDown(1);
-    doc.text(`Ticket Type: ${ticketType}`);
+    doc.text(`TICKET TYPE: ${ticketType}`);
     doc.moveDown(1);
-    doc.text(`Category: ${category}`);
+    doc.text(`CATEGORY: ${category}`);
     doc.moveDown(1);
-    doc.text(`Payment Method: ${paymentMethod}`);
+    doc.text(`PAYMENT METHOD: ${paymentMethod}`);
     doc.moveDown(1);
-    doc.text(`Quantity: ${quantity}`);
-    if (paymentMethod === "UPI") doc.text(`Transaction ID: ${transaction_id}`);
+    doc.text(`QUANTITY: ${quantity}`);
+    if (paymentMethod === "UPI") doc.text(`TRANSACTION ID: ${transaction_id}`);
 
-    doc.moveDown(1.5);
+    doc.moveDown(0.5);
 
     // QR Code Section
-    doc.image(qrPath, { fit: [150, 150], align: "center" });
+    doc.image(qrPath, { fit: [140, 140], align: "center" });
 
     // Unique Code Below QR
     doc.moveDown(4);
-    doc.font("Helvetica-Bold").fontSize(14).fillColor("#064f25").text(`Unique Code: ${uniqueCode}`, { align: "center" });
+    doc.font("Helvetica-Bold").fontSize(14).fillColor("#FFFFFF").text(`UNIQUE CODE: ${uniqueCode}`, { align: "right" });
 
     // Footer
     doc.moveDown(5);
-    doc.font("Helvetica-Oblique").fontSize(12).fillColor("#555").text("This ticket is valid for entry. Please show it at the event gate.");
+    // doc.font("Helvetica-Oblique").fontSize(12).fillColor("#555").text("This ticket is valid for entry. Please show it at the event gate.");
 
     doc.end();
 
