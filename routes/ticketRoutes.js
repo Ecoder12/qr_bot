@@ -90,7 +90,7 @@ router.get("/download-ticket", async (req, res) => {
     doc.moveDown(8);
 
     // Ticket Details Section
-    doc.font("Helvetica").fontSize(16).fillColor("#FFFFFF");
+    doc.font("Helvetica-Bold").fontSize(16).fillColor("#FFFFFF");
 
     doc.text(`NAME: ${fullName}`);
     doc.moveDown(1);
