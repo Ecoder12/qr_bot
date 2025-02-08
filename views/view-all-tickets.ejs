@@ -87,7 +87,7 @@
                     <th>Category</th>
                     <th>Payment Method</th>
                     <th>Transaction Id</th>
-                    <th>QR Code</th>
+                    <th>Quantity</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -103,7 +103,8 @@
                         <td><%= ticket.category %></td>
                         <td><%= ticket.paymentMethod %></td>
                         <td><%= ticket.transaction_id %></td>
-                        <td><img src="<%= ticket.qrCode %>" alt="QR Code"></td>
+                        <!-- <td><img src="<%= ticket.qrCode %>" alt="QR Code"></td> -->
+                        <td><%= ticket.quantity %></td>
                         <td>
                             <!-- Button to download the QR code and ticket details -->
                             <a href="<%= ticket.qrCode %>" class="download-btn" 
