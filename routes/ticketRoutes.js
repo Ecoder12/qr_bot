@@ -26,29 +26,58 @@ const db = mysql.createConnection({
 router.post("/generate-ticket", async (req, res) => {
     const { campusAmbassadorID, fullName, phoneNumber, emailAddress, ticketType, category, paymentMethod, quantity, transaction_id } = req.body;
 
-    // Generate QR Code
-    const qrData = `${fullName} | ${ticketType} | ${category} | ${paymentMethod}`;
-    const qrImagePath = path.join(__dirname, "../public/qrcode.png");
+    try {
+        // Generate QR Code
+        const qrData = `${fullName} | ${ticketType} | ${category} | ${paymentMethod}`;
+        const qrImagePath = path.join(__dirname, "../public/qrcode.png");
 
-    await QRCode.toFile(qrImagePath, qrData);
+        await QRCode.toFile(qrImagePath, qrData);
 
-    // Store ticket details
-    const ticket = {
-        promoterID: campusAmbassadorID,
-        fullName,
-        phoneNumber,
-        emailAddress,
-        ticketType,
-        category,
-        paymentMethod,
-        quantity,
-        transaction_id: paymentMethod === "UPI" ? transaction_id : null,
-        qrCodeURL: "/qrcode.png", // QR Code accessible via public folder
-    };
+        // Insert ticket details into the database
+        const query = `
+            INSERT INTO tickets (
+                campusAmbassadorID, fullName, phoneNumber, emailAddress, 
+                ticketType, category, paymentMethod, quantity, 
+                qrCode, transaction_id, createdAt
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `;
 
-    // Render ticket.ejs with ticket data
-    res.render("ticket", { ticket });
+        const values = [
+            campusAmbassadorID, fullName, phoneNumber, emailAddress,
+            ticketType, category, paymentMethod, quantity,
+            "/qrcode.png", paymentMethod === "UPI" ? transaction_id : null
+        ];
+
+        db.query(query, values, (err, result) => {
+            if (err) {
+                console.error("Database insertion error:", err);
+                return res.status(500).json({ error: "Database error" });
+            }
+
+            // Render ticket.ejs with ticket data
+            const ticket = {
+                promoterID: campusAmbassadorID,
+                fullName,
+                phoneNumber,
+                emailAddress,
+                ticketType,
+                category,
+                paymentMethod,
+                quantity,
+                transaction_id: paymentMethod === "UPI" ? transaction_id : null,
+                qrCodeURL: "/qrcode.png", // QR Code accessible via public folder
+            };
+
+            res.render("ticket", { ticket });
+        });
+
+    } catch (error) {
+        console.error("Error generating ticket:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
 });
+
+
 
 // Route to generate and download PDF ticket
 router.get("/download-ticket", async (req, res) => {
