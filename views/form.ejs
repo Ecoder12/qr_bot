@@ -93,6 +93,12 @@
                 <option value="Weekend">Weekend</option>
                 <option value="Day1">Day 1</option>
                 <option value="Day2">Day 2</option>
+                <option value="RomeoLaneExclusive">Romeo Lane Exclusive</option>
+                <option value="Cover500">Cover Charge 500</option>
+                <option value="Cover1000">Cover Charge 1000</option>
+                <option value="Cover1650">Cover Charge 1650</option>
+                <option value="Cover2500">Cover Charge 2500</option>
+                
             </select>
 
             <label for="paymentMethod">Payment Method</label>
@@ -175,7 +181,7 @@
         updatePrice();
     </script>
     <script>
-        const validPromoterIDs = ["LOCALUZPSP29", "LOCALUZPPK28", "LOCALUZPSMP01", "LOCALUZPSA30", "LOCALUZPSD31", "LOCALUZPRS32", "LOCALUZPRS32","LOCALUZPAN33","LOCALUZPSC34","LOCALUZPSAP35","LOCALUZPTA36","LOCALUZPSUP37" ];
+        const validPromoterIDs = ["LOCALUZPSP29", "LOCALUZPPK28", "LOCALUZPSMP01", "LOCALUZPSA30", "LOCALUZPSD31", "LOCALUZPRS32", "LOCALUZPRS32","LOCALUZPAN33","LOCALUZPSC34","LOCALUZPSAP35","LOCALUZPTA36","LOCALUZPSUP37" ,"LOCALUZPPD38","LOCALUZEXCLUSIVE01","LOCALUZEXCLUSIVE02","LOCALUZEXCLUSIVE03", "LOCALUZEXCLUSIVE04"];
     
         document.querySelector("form").addEventListener("submit", function(event) {
             const promoterID = document.getElementById("promoterID").value;
